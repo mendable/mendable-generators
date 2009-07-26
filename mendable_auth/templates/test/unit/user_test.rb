@@ -19,7 +19,7 @@ class UserTest < ActiveSupport::TestCase
   end
   should_allow_values_for :email, *%w{com org new edu es jp info co.uk org.uk}.collect{|ending|  "foo.var_1-9@baz-quux0.example.#{ending}" }
   should_allow_values_for :email, *%w{foobar@example.com foobar@example.co.uk foobar@mail.example.com foo_bar@example.com}
-  should_not_allow_values_for :email, %w{foobar@example.c @example.com @fcom foo@bar..com foobar@example.infod foobar.example.com foo@ex(ample.com foo@example,com}
+  should_not_allow_values_for :email, *%w{foobar@example.c @example.com @fcom foo@bar..com foobar@example.infod foobar.example.com foo@ex(ample.com foo@example,com}
 
   # Confirm password enforces a reasonable length constraint
   should_ensure_length_in_range :password, 4..16

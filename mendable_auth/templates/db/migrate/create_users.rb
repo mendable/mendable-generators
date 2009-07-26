@@ -1,4 +1,4 @@
-class AddMendableAuth < ActiveRecord::Migration
+class CreateUsers < ActiveRecord::Migration
   def self.up
     create_table :<%= table_name %> do |t|
       t.string :username

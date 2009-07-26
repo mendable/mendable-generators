@@ -13,7 +13,7 @@ class MendableAuthGenerator < Rails::Generator::Base
       # Views
 
       # Migrations
-      m.migration_template 'db/migrate/add_mendable_auth.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "add_mendable_auth"
+      m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
 
       # Tests
       m.file 'test/unit/user_test.rb', 'test/unit/user_test.rb'
