@@ -7,6 +7,16 @@
 My Rails generators to quickly create working stub code for things I repeat often.
 
 
+== mendable_scaffold
+Based on scaffold generator from Rails 2.3.3.
+* Does not include scaffold.css or layout template (I always delete these anyway)
+* Moves destroy link onto show page
+* Removes edit/destroy links from index page
+* Adds Destroy link to show page
+* Index page links first column value to the show action
+* Adds a H1 tag to the view page using the first attribute as the value
+
+
 == mendable_auth
 This generator will currently give you:
 * A user model with username, email address and password

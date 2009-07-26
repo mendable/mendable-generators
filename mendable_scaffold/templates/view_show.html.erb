@@ -1,0 +1,13 @@
+<h1>Viewing <%%=h @<%= singular_name %>.<%= attributes.first.name %> %></h1>
+
+<% for attribute in attributes -%>
+<p>
+  <b><%= attribute.column.human_name %>:</b>
+  <%%=h @<%= singular_name %>.<%= attribute.name %> %>
+</p>
+
+<% end -%>
+
+<%%= link_to 'Edit', edit_<%= singular_name %>_path(@<%= singular_name %>) %> |
+<%%= link_to 'Destroy', @<%= singular_name %>, :confirm => 'Are you sure?', :method => :delete %> |
+<%%= link_to 'Back', <%= plural_name %>_path %>
