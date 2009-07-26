@@ -1,0 +1,26 @@
+= Rails Generators
+
+* Author: Jason Lambert
+* Homepage: http://www.mendable.com
+* GitHub: http://www.github.com/mendable
+
+My Rails generators to quickly create working stub code for things I repeat often.
+
+
+== mendable_auth
+This generator will currently give you:
+* A user model with username, email address and password
+* Unit tests + Factories for above
+
+TODO: I still need to add the controller/views (login, signup, forgot password, edit account, etc) and some application helpers (current_user, logged_in?, etc)
+
+
+== Patches
+If you branch and enhance this product in anyway, please do contact me to let me know, either on GitHub (http://www.github.com/mendable) or through my website (http://www.mendable.com).
+
+
+== Licence
+
+Copyright (c) 2009 Jason Lambert (http://www.mendable.com).
+
+Code released under the MIT license.
