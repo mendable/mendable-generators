@@ -10,6 +10,7 @@ My Rails generators to quickly create working stub code for things I repeat ofte
 == mendable_scaffold
 Based on scaffold generator from Rails 2.3.3, usage is exactly the same as the standard rails scaffold.
 * Does not include scaffold.css or layout template (I always delete these anyway)
+* Does not include controller specific helpers
 * Removes edit/destroy links from index page
 * Adds Destroy link to show page
 * Index page links first column value to the show action
