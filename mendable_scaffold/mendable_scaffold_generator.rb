@@ -60,7 +60,9 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
         (nested? ? 'controller_nested.rb' : 'controller.rb'), File.join('app/controllers', controller_class_path, "#{controller_file_name}_controller.rb")
       )
 
-      m.template('functional_test.rb', File.join('test/functional', controller_class_path, "#{controller_file_name}_controller_test.rb"))
+      m.template(
+        (nested? ? 'functional_test_nested.rb' : 'functional_test.rb'), File.join('test/functional', controller_class_path, "#{controller_file_name}_controller_test.rb")
+      )
 
       m.route_resources controller_file_name
 
