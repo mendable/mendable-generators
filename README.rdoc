@@ -15,6 +15,8 @@ Based on scaffold generator from Rails 2.3.3, usage is exactly the same as the s
 * Adds Destroy link to show page
 * Index page links first column value to the show action
 * Adds a H1 tag to the view page using the first attribute as the value
+* Includes create/edit/destroy icons, to start delivering a polished-app feel immediately
+* Gives the index view table a CSS id for easy styling, and each row a cycle'd class name
 
 
 == mendable_auth (not finished)

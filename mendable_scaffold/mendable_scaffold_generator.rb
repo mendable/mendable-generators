@@ -61,6 +61,28 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
 
       m.route_resources controller_file_name
 
+
+      %w{create.png edit.png destroy.png}.each do |image_filename|
+        m.file image_filename, "public/images/#{image_filename}"
+      end
+
+      helper_code = <<-END
+  # mendable_scaffold
+  def new_icon
+    image_tag 'create.png'
+  end
+  
+  def edit_icon 
+    image_tag 'edit.png'
+  end
+
+  def destroy_icon
+    image_tag 'destroy.png'
+  end
+  # / mendable_scaffold
+END
+      m.add_to_application_helper(helper_code)
+
       m.dependency 'model', [name] + @args, :collision => :skip
     end
   end
@@ -89,4 +111,29 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
     def model_name
       class_name.demodulize
     end
+
+
+
+### add code to application helper, only if it already exists (so each generator ran does not repeat the code again)
+    def exists_in_file?(relative_destination, string)
+      path = destination_path(relative_destination)
+      content = File.read(path)
+      return content.include?(string)
+    end
+
+    def gsub_file(relative_destination, regexp, *args, &block)
+      path = destination_path(relative_destination)
+      content = File.read(path).gsub(regexp, *args, &block)
+      File.open(path, 'wb') { |file| file.write(content) }
+    end
+
+    def add_to_application_helper(helper_code)
+      return if exists_in_file?('app/helpers/application_helper.rb', helper_code)
+      sentinel = 'module ApplicationHelper'
+
+      gsub_file 'app/helpers/application_helper.rb', /(#{Regexp.escape(sentinel)})/mi do |match|
+        "#{match}\n#{helper_code}\n"
+      end
+    end
+
 end
