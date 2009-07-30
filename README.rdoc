@@ -11,12 +11,17 @@ My Rails generators to quickly create working stub code for things I repeat ofte
 Based on scaffold generator from Rails 2.3.3, usage is exactly the same as the standard rails scaffold.
 * Does not include scaffold.css or layout template (I always delete these anyway)
 * Does not include controller specific helpers
-* Removes edit/destroy links from index page
 * Adds Destroy link to show page
 * Index page links first column value to the show action
 * Adds a H1 tag to the view page using the first attribute as the value
 * Includes create/edit/destroy icons, to start delivering a polished-app feel immediately
 * Gives the index view table a CSS id for easy styling, and each row a cycle'd class name
+* Uses Shoulda for functional testing
+
+
+== mendable_model
+Based on shoulda_model from http://github.com/technicalpickles/shoulda_generator/
+* Same as rails model generator, but with factories and shoulda instead of test_unit
 
 
 == mendable_auth (not finished)

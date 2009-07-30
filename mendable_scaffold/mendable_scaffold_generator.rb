@@ -83,7 +83,7 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
 END
       m.add_to_application_helper(helper_code)
 
-      m.dependency 'model', [name] + @args, :collision => :skip
+      m.dependency 'mendable_model', [name] + @args, :collision => :skip
     end
   end
 

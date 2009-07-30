@@ -1,45 +1,66 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class <%= controller_class_name %>ControllerTest < ActionController::TestCase
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:<%= table_name %>)
+  context 'GET to index' do
+    setup do
+      get :index
+    end
+    should_respond_with :success
+    should_assign_to :<%= table_name %>
   end
 
-  test "should get new" do
-    get :new
-    assert_response :success
-  end
-
-  test "should create <%= file_name %>" do
-    assert_difference('<%= class_name %>.count') do
-      post :create, :<%= file_name %> => { }
+  context 'GET to new' do
+    setup do
+      get :new
     end
 
-    assert_redirected_to <%= file_name %>_path(assigns(:<%= file_name %>))
+    should_respond_with :success
+    should_render_template :new
+    should_assign_to :<%= file_name %>
   end
 
-  test "should show <%= file_name %>" do
-    get :show, :id => <%= table_name %>(:one).to_param
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get :edit, :id => <%= table_name %>(:one).to_param
-    assert_response :success
-  end
-
-  test "should update <%= file_name %>" do
-    put :update, :id => <%= table_name %>(:one).to_param, :<%= file_name %> => { }
-    assert_redirected_to <%= file_name %>_path(assigns(:<%= file_name %>))
-  end
-
-  test "should destroy <%= file_name %>" do
-    assert_difference('<%= class_name %>.count', -1) do
-      delete :destroy, :id => <%= table_name %>(:one).to_param
+  context 'POST to create' do
+    setup do
+      post :create, :<%= file_name %> => Factory.attributes_for(:<%= file_name %>)
+      @<%= file_name %> = <%= class_name %>.find(:all).last
     end
+    
+    should_redirect_to('show path') { <%= file_name %>_path(@<%= file_name %>) }
+  end
 
-    assert_redirected_to <%= table_name %>_path
+  context 'GET to show' do
+    setup do
+      @<%= file_name %> = Factory(:<%= file_name %>)
+      get :show, :id => @<%= file_name %>.id
+    end
+    should_respond_with :success
+    should_render_template :show
+    should_assign_to :<%= file_name %>
+  end
+
+  context 'GET to edit' do
+    setup do
+      @<%= file_name %> = Factory(:<%= file_name %>)
+      get :edit, :id => @<%= file_name %>.id
+    end
+    should_respond_with :success
+    should_render_template :edit
+    should_assign_to :<%= file_name %>
+  end
+
+  context 'PUT to update' do
+    setup do
+      @<%= file_name %> = Factory(:<%= file_name %>)
+      put :update, :id => @<%= file_name %>.id, :<%= file_name %> => Factory.attributes_for(:<%= file_name %>)
+    end
+    should_redirect_to('show path') { <%= file_name %>_path(@<%= file_name %>) }
+  end
+
+  context 'DELETE to destroy' do
+    setup do
+      @<%= file_name %> = Factory(:<%= file_name %>)
+      delete :destroy, :id => @<%= file_name %>.id
+    end
+    should_redirect_to('index path') { <%= table_name %>_path }
   end
 end
