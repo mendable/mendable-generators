@@ -9,12 +9,15 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
                 :controller_class_name,
                 :controller_underscore_name,
                 :controller_singular_name,
-                :controller_plural_name
+                :controller_plural_name,
+                :nesting_owner
   alias_method  :controller_file_name,  :controller_underscore_name
   alias_method  :controller_table_name, :controller_plural_name
 
   def initialize(runtime_args, runtime_options = {})
     super
+
+    @nesting_owner = (options[:owner] || "").underscore.singularize
 
     if @name == @name.pluralize && !options[:force_plural]
       logger.warning "Plural version of the model detected, using singularized version.  Override with --force-plural."
@@ -54,7 +57,7 @@ class MendableScaffoldGenerator < Rails::Generator::NamedBase
       end
 
       m.template(
-        'controller.rb', File.join('app/controllers', controller_class_path, "#{controller_file_name}_controller.rb")
+        (nested? ? 'controller_nested.rb' : 'controller.rb'), File.join('app/controllers', controller_class_path, "#{controller_file_name}_controller.rb")
       )
 
       m.template('functional_test.rb', File.join('test/functional', controller_class_path, "#{controller_file_name}_controller_test.rb"))
@@ -102,6 +105,7 @@ END
              "Don't generate a migration file for this model") { |v| options[:skip_migration] = v }
       opt.on("--force-plural",
              "Forces the generation of a plural ModelName") { |v| options[:force_plural] = v }
+      opt.on("--owner=owner", "Specifys the parent resource") { |v| options[:owner] = v }
     end
 
     def scaffold_views
@@ -112,6 +116,48 @@ END
       class_name.demodulize
     end
 
+
+    # a_eval - decides if to include "@" symbol or nothing based on value passed
+    # TODO rename this function to something more descriptive
+    def a_eval(f) f ? "@" : "" end
+
+    def index_path 
+      nested? ? "#{nesting_owner}_#{plural_name}_path(@#{nesting_owner})" : "#{plural_name}_path"
+    end
+
+    def new_path
+      nested? ? "new_#{nesting_owner}_#{singular_name}_path(@#{nesting_owner})" : "new_#{singular_name}_path"
+    end
+
+    def new_form_path
+      nested? ? "[@#{singular_name}.#{nesting_owner}, @#{singular_name}]" : "@#{singular_name}"
+    end
+
+    def show_path(a_var = true)
+      nested? ? "#{nesting_owner}_#{singular_name}_path(@#{nesting_owner}, #{a_eval(a_var)}#{singular_name})" : "#{a_eval(a_var)}#{singular_name}"
+    end
+
+    def edit_path(a_var = true)
+      nested? ? "edit_#{nesting_owner}_#{singular_name}_path(@#{nesting_owner}, #{a_eval(a_var)}#{singular_name})" : "edit_#{singular_name}_path(#{a_eval(a_var)}#{singular_name})"
+    end
+  
+    def edit_form_path
+      nested? ? "[@#{nesting_owner}, @#{singular_name}]" : "@#{singular_name}"
+    end
+
+    def destroy_path(a_var = true)
+      nested? ? "#{nesting_owner}_#{singular_name}_path(@#{nesting_owner}, #{a_eval(a_var)}#{singular_name})" : "#{a_eval(a_var)}#{singular_name}"
+    end
+
+    # AKA, --owner was given?
+    def nested?
+      nesting_owner.length > 0
+    end
+
+    # if --owner specified, returns class name
+    def nesting_owner_class
+      nesting_owner.classify
+    end
 
 
 ### add code to application helper, only if it already exists (so each generator ran does not repeat the code again)

@@ -17,6 +17,7 @@ Based on scaffold generator from Rails 2.3.3, usage is exactly the same as the s
 * Includes create/edit/destroy icons, to start delivering a polished-app feel immediately
 * Gives the index view table a CSS id for easy styling, and each row a cycle'd class name
 * Uses Shoulda for functional testing
+* CAN BE NESTED, using "--owner=Model" to create nested controller and views! (needs functional test + documentation - coming soon)
 
 
 == mendable_model
