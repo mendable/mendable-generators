@@ -24,8 +24,7 @@ class SessionControllerTest < ActionController::TestCase
           post :create, :email => @user.email, :password => @password
         end
 
-        should_respond_with :success
-        should_redirect_to "homepage" { root_url }
+        should_redirect_to("homepage") { root_url }
         should_set_the_flash_to "Login Successful"
         
         should "set the user's id in the session" do
@@ -73,6 +72,6 @@ class SessionControllerTest < ActionController::TestCase
     end
 
     should_set_the_flash_to "Logout Successful"
-    should_redirect_to "homepage" { root_url }
+    should_redirect_to("homepage") { root_url }
   end
 end

@@ -13,7 +13,7 @@ class MendableAuthGenerator < Rails::Generator::Base
 
       # Views
       m.directory 'app/views/session'
-      m.file 'login.html.erb', 'app/views/session/create.html.erb'
+      m.file 'login.html.erb', 'app/views/session/new.html.erb'
 
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
@@ -27,9 +27,15 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.file 'test/factories/user.rb', 'test/factories/user.rb'
 
       # Routes
-      m.route_resources 'session'
-      
-      # application controller
+      routes_to_add = <<-END
+  map.resource :session,  :controller => 'session'
+  map.login '/login',     :controller => 'session', :action => 'new'
+  map.logout '/logout',   :controller => 'session', :action => 'destroy'
+END
+      add_to_routes(routes_to_add)
+ 
+     
+      # Application Controller
       code_to_add = <<-END
   # Returns the currently logged in user, otherwise nil/false.
   def current_user
@@ -60,6 +66,17 @@ END
       path = destination_path(relative_destination)
       content = File.read(path).gsub(regexp, *args, &block)
       File.open(path, 'wb') { |file| file.write(content) }
+    end
+
+    def add_to_routes(route_text)
+      filename = 'config/routes.rb'
+
+      return if exists_in_file?(filename, route_text)
+
+      sentinel = 'ActionController::Routing::Routes.draw do |map|'
+      gsub_file filename, /(#{Regexp.escape(sentinel)})/mi do |match|
+        "#{match}\n#{route_text}\n"
+      end
     end
 
     def add_to_application_controller(helper_code)
