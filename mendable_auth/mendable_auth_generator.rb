@@ -26,9 +26,11 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.directory 'test/factories'
       m.file 'test/factories/user.rb', 'test/factories/user.rb'
 
-
+      # Routes
+      m.route_resources 'session'
+      
       # application controller
-      code_to_add <<-END
+      code_to_add = <<-END
   # Returns the currently logged in user, otherwise nil/false.
   def current_user
     return nil if not logged_in?
