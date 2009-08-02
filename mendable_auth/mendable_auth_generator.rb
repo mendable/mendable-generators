@@ -8,7 +8,7 @@ class MendableAuthGenerator < Rails::Generator::Base
       # Controllers
 
       # Models
-      m.file 'app/models/user.rb', 'app/models/user.rb'
+      m.file 'user.rb', 'app/models/user.rb'
 
       # Views
 
