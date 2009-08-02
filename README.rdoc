@@ -30,7 +30,9 @@ This generator will currently give you:
 * A user model with username, email address and password
 * Unit tests + Factories for above
 
-TODO: I still need to add the controller/views (login, signup, forgot password, edit account, etc) and some application helpers (current_user, logged_in?, etc)
+Design decisions:
+* Users should log in with their EMAIL address (not username). On the basis that user's should be able to remember their own email address, but usernames for each site they visit is not so likely.
+* Should NOT require user to validate their account by sending them an activation email (bad usability). 
 
 
 == Patches

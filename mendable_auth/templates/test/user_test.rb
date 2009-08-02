@@ -24,4 +24,25 @@ class UserTest < ActiveSupport::TestCase
   # Confirm password enforces a reasonable length constraint
   should_ensure_length_in_range :password, 4..16
 
+
+  context "attempting authentication" do
+    context "for an existing user" do
+      setup { @user = Factory(:user) }
+
+      should "return user record when correct email and password used" do
+        assert_equal @user, User.authenticate(@user.email, @user.password)
+      end
+
+      should "return nil when correct email but invalid password used" do
+        assert_equal nil, User.authenticate(@user.email, "wrong_password")
+      end
+    end
+
+    context "for a customer that does not exist" do
+      should "return false for User#authenticate" do
+        assert_equal nil, User.authenticate("doesnotexist@example.com", "password")
+      end
+    end
+  end
+
 end

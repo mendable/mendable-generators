@@ -17,4 +17,11 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email, :message => "An account with this email address already exists"
   validates_format_of :email, :with => VALID_EMAIL_REGEX, :message => "Address does not appear to be a valid email address"
 
+
+  # Authenticates a user. Pass an email address and password to authenticate.
+  # Function returns the corresponding user record if valid, or nil.
+  def self.authenticate(email, password)
+    find(:first, :conditions=> ["email = ? AND password = ?", email, password])
+  end
+
 end
