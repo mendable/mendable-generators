@@ -45,4 +45,16 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+
+  context "Creating a new user" do
+    setup do
+      ActionMailer::Base.deliveries.clear
+      @user = Factory(:user)
+    end
+
+    should "send signup email" do
+      assert_sent_email {|email| email.to.include?(@user.email) }
+    end
+  end
+
 end

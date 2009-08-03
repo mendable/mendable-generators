@@ -24,4 +24,9 @@ class User < ActiveRecord::Base
     find(:first, :conditions=> ["email = ? AND password = ?", email, password])
   end
 
+  # Send user an email after signup
+  def after_create
+    Email.deliver_signup(self)    
+  end
+
 end

@@ -11,14 +11,17 @@ class MendableAuthGenerator < Rails::Generator::Base
 
       # Models
       m.file 'user.rb', 'app/models/user.rb'
+      m.file 'email.rb', 'app/models/email.rb'
 
       # Views
       m.directory 'app/views/session'
       m.directory 'app/views/users'
+      m.directory 'app/views/email'
       m.file 'login.html.erb', 'app/views/session/new.html.erb'
       %w{new edit index show}.each do |file|
         m.file "#{file}.html.erb", "app/views/users/#{file}.html.erb"
       end
+      m.file 'signup.erb', 'app/views/email/signup.erb'
 
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
