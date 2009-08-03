@@ -58,6 +58,16 @@ END
   def logged_in?
     session[:user_id] && session[:user_id].to_i > 0 ? true : false
   end
+
+  # before_filter to ensure a user is logged in before accessing specified actions.
+  def login_required
+    if !logged_in? then
+      flash[:notice] = "You need to sign up or log in before seeing this page."
+      redirect_to login_url
+      return false
+    end
+    return true
+  end
 END
       add_to_application_controller(code_to_add)
 
@@ -66,6 +76,25 @@ END
       code_to_add = <<-END
   def login_as(user)
     @request.session[:user_id] = user.id
+  end
+
+ def self.should_require_login(method, action, params={})
+    method = method.to_s.downcase
+    context "'\#{method.upcase}' method on '\#{action}' action" do
+      setup do
+        case method
+          when "get"   : get(action, params)
+          when "post"  : post(action, params)
+          when "put"   : put(action, params)
+          when "delete": delete(action, params)
+          else raise "\#{method.upcase} is an unknown HTTP method"
+        end
+      end
+
+      should "require login" do
+        assert_redirected_to login_url
+      end
+    end
   end
 END
       add_to_test_helper(code_to_add)

@@ -2,8 +2,17 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class UsersControllerTest < ActionController::TestCase
   
+  context "Users Controller" do
+    should_require_login :get, :index
+    should_require_login :get, :edit, {:id => 1}
+    should_require_login :put, :update, {:id => 1}
+    should_require_login :delete, :destroy, {:id => 1}
+  end
+
+
   context "GET on index page" do
     setup do
+      login_as Factory(:user)
       get :index
     end
     should_respond_with :success
@@ -15,6 +24,7 @@ class UsersControllerTest < ActionController::TestCase
   context "GET on show page" do
     setup do
       @user = Factory(:user)
+      login_as @user
       get :show, :id => @user.id
     end
 
@@ -39,7 +49,7 @@ class UsersControllerTest < ActionController::TestCase
   
   context "POST on signup page" do
     context "with valid details" do
-      setup do 
+      setup do
         post :create, :user => Factory.attributes_for(:user)
         @user = User.find(:all).last
       end
@@ -70,6 +80,7 @@ class UsersControllerTest < ActionController::TestCase
   context 'GET to edit' do
     setup do
       @user = Factory(:user)
+      login_as @user
       get :edit, :id => @user.id
     end
     should_respond_with :success
@@ -83,6 +94,7 @@ class UsersControllerTest < ActionController::TestCase
       setup do
         @email = "valid2@example.com"
         @user = Factory(:user, :email => "valid1@example.com")
+        login_as @user
         put :update, :id => @user.id, :user => {:email => @email}
       end
 
@@ -98,6 +110,7 @@ class UsersControllerTest < ActionController::TestCase
     context "with invalid details (eg, empty email)" do
       setup do
         @user = Factory(:user)
+        login_as @user
         put :update, :id => @user.id, :user => {:email => ""}
       end
       
@@ -117,6 +130,7 @@ class UsersControllerTest < ActionController::TestCase
   context 'DELETE to destroy' do
     setup do
       @user = Factory(:user)
+      login_as @user
       delete :destroy, :id => @user.id
     end
     
