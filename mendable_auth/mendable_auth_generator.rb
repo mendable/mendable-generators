@@ -60,6 +60,15 @@ END
   end
 END
       add_to_application_controller(code_to_add)
+
+
+      # Test helper
+      code_to_add = <<-END
+  def login_as(user)
+    @request.session[:user_id] = user.id
+  end
+END
+      add_to_test_helper(code_to_add)
     end
   end 
 
@@ -77,26 +86,25 @@ END
       File.open(path, 'wb') { |file| file.write(content) }
     end
 
-    def add_to_routes(route_text)
-      filename = 'config/routes.rb'
 
-      return if exists_in_file?(filename, route_text)
-
-      sentinel = 'ActionController::Routing::Routes.draw do |map|'
-      gsub_file filename, /(#{Regexp.escape(sentinel)})/mi do |match|
-        "#{match}\n#{route_text}\n"
+    def add_to_file(filename, starting_point, addition)
+      return if exists_in_file?(filename, addition)
+      
+      gsub_file filename, /(#{Regexp.escape(starting_point)})/mi do |match|
+        "#{match}\n#{addition}\n"
       end
+    end
+    
+    def add_to_test_helper(helper_code)
+      add_to_file('test/test_helper.rb', 'class ActiveSupport::TestCase', helper_code)
+    end
+
+    def add_to_routes(route_text)
+      add_to_file('config/routes.rb', 'ActionController::Routing::Routes.draw do |map|', route_text)
     end
 
     def add_to_application_controller(helper_code)
-      filename = 'app/controllers/application_controller.rb'
-
-      return if exists_in_file?(filename, helper_code)
-
-      sentinel = 'class ApplicationController < ActionController::Base'
-      gsub_file filename, /(#{Regexp.escape(sentinel)})/mi do |match|
-        "#{match}\n#{helper_code}\n"
-      end
+      add_to_file('app/controllers/application_controller.rb', 'class ApplicationController < ActionController::Base', helper_code)
     end
 
 end
