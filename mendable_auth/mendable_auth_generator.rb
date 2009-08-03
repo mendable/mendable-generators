@@ -7,13 +7,18 @@ class MendableAuthGenerator < Rails::Generator::Base
 
       # Controllers
       m.file 'session_controller.rb', 'app/controllers/session_controller.rb'
+      m.file 'users_controller.rb', 'app/controllers/users_controller.rb'
 
       # Models
       m.file 'user.rb', 'app/models/user.rb'
 
       # Views
       m.directory 'app/views/session'
+      m.directory 'app/views/users'
       m.file 'login.html.erb', 'app/views/session/new.html.erb'
+      %w{new edit index show}.each do |file|
+        m.file "#{file}.html.erb", "app/views/users/#{file}.html.erb"
+      end
 
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
@@ -21,6 +26,7 @@ class MendableAuthGenerator < Rails::Generator::Base
       # Tests
       m.file 'test/user_test.rb', 'test/unit/user_test.rb'
       m.file 'test/session_controller_test.rb', 'test/functional/session_controller_test.rb'      
+      m.file 'test/users_controller_test.rb', 'test/functional/users_controller_test.rb'
 
       # Factories
       m.directory 'test/factories'
@@ -29,8 +35,11 @@ class MendableAuthGenerator < Rails::Generator::Base
       # Routes
       routes_to_add = <<-END
   map.resource :session,  :controller => 'session'
+  map.resources :users
+
   map.login '/login',     :controller => 'session', :action => 'new'
   map.logout '/logout',   :controller => 'session', :action => 'destroy'
+  map.signup '/signup',   :controller => 'users', :action => 'new'
 END
       add_to_routes(routes_to_add)
  
