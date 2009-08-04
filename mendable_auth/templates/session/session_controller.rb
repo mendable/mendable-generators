@@ -2,6 +2,9 @@ class SessionController < ApplicationController
 
   # show login page
   def new
+    if logged_in? then
+      redirect_to root_url
+    end
   end
 
   # process login credentials

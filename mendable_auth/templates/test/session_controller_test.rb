@@ -3,12 +3,25 @@ require File.dirname(__FILE__) + '/../test_helper'
 class SessionControllerTest < ActionController::TestCase
 
   context 'viewing login page' do
-    setup do
-      get :new
+    context "when not logged in" do
+      setup do
+        get :new
+      end
+      should_respond_with :success
+      should_render_template :new
+      should_not_set_the_flash
     end
-    should_respond_with :success
-    should_render_template :new
-    should_not_set_the_flash
+
+    context "when already logged in" do
+      setup do
+        @user = Factory(:user)
+        login_as @user
+        get :new
+      end
+
+      should_redirect_to("homepage") { root_url }
+      should_not_set_the_flash
+    end
   end
 
 
