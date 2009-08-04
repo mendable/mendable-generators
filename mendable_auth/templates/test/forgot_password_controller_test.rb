@@ -95,7 +95,7 @@ class ForgotPasswordControllerTest < ActionController::TestCase
 
       context "with an invalid reset code" do
         setup do
-          put :update, :id => @user, :c => "invalid", :password => "newpass"
+          put :update, :id => @user, :c => "invalid", :user => {:password => "newpass"}
         end
         should_set_the_flash_to "The reset code is not valid. Please reset your password again, only using the new link we email to you"
         should_redirect_to("reset password page") { forgot_password_reset_url }
@@ -105,9 +105,9 @@ class ForgotPasswordControllerTest < ActionController::TestCase
         end
       end
 
-      context "with a valid reset code" do
+      context "with a valid reset code and valid password" do
         setup do
-          put :update, :id => @user, :c => @user.password_reset_code, :password => "newpassword"
+          put :update, :id => @user, :c => @user.password_reset_code, :user => {:password => "newpassword"}
         end
 
         should "update the users password" do
@@ -117,6 +117,19 @@ class ForgotPasswordControllerTest < ActionController::TestCase
 
         should_redirect_to("login page") { login_url }
         should_set_the_flash_to "Password successfully changed - Please login"
+      end
+
+      context "with a valid reset code but INVALID password" do
+        setup do 
+          put :update, :id => @user, :c => @user.password_reset_code, :user => {:password => "$$$"}
+        end
+
+        should "not update the users password" do
+          @user.reload
+          assert_equal @user.password, "password"
+        end
+
+        should_render_template :edit
       end
     end
   end

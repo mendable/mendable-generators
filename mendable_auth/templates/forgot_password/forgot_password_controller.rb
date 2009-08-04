@@ -27,10 +27,12 @@ class ForgotPasswordController < ApplicationController
   
   # Save the new password
   def update
-    @user.password = params[:password]
+    @user.password = params[:user][:password]
     if @user.save then
       flash[:notice] = "Password successfully changed - Please login"
       redirect_to login_url
+    else
+      render :edit
     end
   end
 
