@@ -25,14 +25,23 @@ Based on shoulda_model from http://github.com/technicalpickles/shoulda_generator
 * Same as rails model generator, but with factories and shoulda instead of test_unit
 
 
-== mendable_auth (not finished)
-This generator will currently give you:
-* A user model with username, email address and password
-* Unit tests + Factories for above
+== mendable_auth
+This was a ground-up rewrite of the restful_authentication generator, the primary purpose was to include missing functionality (such as forgot password actions) and provide a far superior test suite using Shoulda and Factory Girl. mendable_auth should be used at the start of a project where you will need user authentication. It provides a great base on which to build your application.
+
+Features:
+* User model with username, email address and password
+* Email model with Signup and Forgot Password emails
+* RESTful Session Controller with Login and Logout actions
+* RESTful User controller including signup and edit account functionality
+* RESTful Forgot Password controller allowing users to reset their password
+* Full test suite using Shoulda and Factory Girl
+* Test Ratio of 1:2 (over 130+ tests)
+* 100% Test coverage (rcov verified)
 
 Design decisions:
 * Users should log in with their EMAIL address (not username). On the basis that user's should be able to remember their own email address, but usernames for each site they visit is not so likely.
-* Should NOT require user to validate their account by sending them an activation email (bad usability). 
+* Should NOT require user to validate their account by sending them an activation email. This is just plain bad usability, forcing user's to navigate away from your website or application, breaking their concentration, and reducing signup conversion rates.
+* The Model and Controller names are standardized.
 
 
 == Patches
