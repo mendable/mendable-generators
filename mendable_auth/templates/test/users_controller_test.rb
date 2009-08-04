@@ -4,6 +4,7 @@ class UsersControllerTest < ActionController::TestCase
   
   context "Users Controller" do
     should_require_login :get, :index
+    should_require_login :get, :show, {:id => 1}
     should_require_login :get, :edit, {:id => 1}
     should_require_login :put, :update, {:id => 1}
     should_require_login :delete, :destroy, {:id => 1}
@@ -55,6 +56,9 @@ class UsersControllerTest < ActionController::TestCase
       end
 
       should_change('User.count', :by => 1) { User.count }
+      should "set the user's id in the session" do
+        assert_equal @user.id, session[:user_id]
+      end
       should_set_the_flash_to "User was successfully created."
       should_redirect_to('show path') { user_path(@user) }
     end

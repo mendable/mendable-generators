@@ -37,12 +37,11 @@ class SessionControllerTest < ActionController::TestCase
           post :create, :email => @user.email, :password => @password
         end
 
-        should_redirect_to("homepage") { root_url }
-        should_set_the_flash_to "Login Successful"
-        
         should "set the user's id in the session" do
           assert_equal @user.id, session[:user_id]
         end
+        should_redirect_to("homepage") { root_url }
+        should_set_the_flash_to "Login Successful" 
       end
 
       context "but incorrect password" do

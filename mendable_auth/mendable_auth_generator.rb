@@ -64,6 +64,11 @@ END
     User.find(session[:user_id])
   end
 
+  # Sets the currently logged in user
+  def set_current_user(user)
+    session[:user_id] = user.id
+  end
+
   helper_method :logged_in?
   # Is the user currently logged in, or are they browsing as a guest? Returns
   # true/false accordingly.
@@ -90,7 +95,7 @@ END
     @request.session[:user_id] = user.id
   end
 
- def self.should_require_login(method, action, params={})
+  def self.should_require_login(method, action, params={})
     method = method.to_s.downcase
     context "'\#{method.upcase}' method on '\#{action}' action" do
       setup do

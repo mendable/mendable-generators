@@ -12,7 +12,7 @@ class SessionController < ApplicationController
     auth_user = User.authenticate(params[:email], params[:password])
     
     if auth_user then
-      session[:user_id] = auth_user.id
+      set_current_user auth_user
       flash[:notice] = "Login Successful"
       redirect_to root_url
     else # authentication failed
