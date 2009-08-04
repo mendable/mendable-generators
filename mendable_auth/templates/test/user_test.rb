@@ -57,4 +57,15 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+
+  context "Calling password_reset_code" do
+    setup do
+      @user = Factory(:user, :password => "password")
+    end
+    
+    should "return a SHA1 Digest of the password as the reset code" do
+      assert_equal "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", @user.password_reset_code
+    end
+  end
+
 end

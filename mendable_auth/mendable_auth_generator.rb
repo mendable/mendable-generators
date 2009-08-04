@@ -6,22 +6,27 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.class_collisions "User", "UserTest"
 
       # Controllers
-      m.file 'session_controller.rb', 'app/controllers/session_controller.rb'
-      m.file 'users_controller.rb', 'app/controllers/users_controller.rb'
+      m.file 'session/session_controller.rb', 'app/controllers/session_controller.rb'
+      m.file 'user/users_controller.rb', 'app/controllers/users_controller.rb'
+      m.file 'forgot_password/forgot_password_controller.rb', 'app/controllers/forgot_password_controller.rb'
 
       # Models
-      m.file 'user.rb', 'app/models/user.rb'
-      m.file 'email.rb', 'app/models/email.rb'
+      m.file 'user/user.rb', 'app/models/user.rb'
+      m.file 'email/email.rb', 'app/models/email.rb'
 
       # Views
       m.directory 'app/views/session'
       m.directory 'app/views/users'
+      m.directory 'app/views/forgot_password'
       m.directory 'app/views/email'
-      m.file 'login.html.erb', 'app/views/session/new.html.erb'
+      m.file 'session/new.html.erb', 'app/views/session/new.html.erb'
       %w{new edit index show}.each do |file|
-        m.file "#{file}.html.erb", "app/views/users/#{file}.html.erb"
+        m.file "user/#{file}.html.erb", "app/views/users/#{file}.html.erb"
       end
-      m.file 'signup.erb', 'app/views/email/signup.erb'
+      m.file 'forgot_password/new.html.erb', 'app/views/forgot_password/new.html.erb'
+      m.file 'forgot_password/edit.html.erb', 'app/views/forgot_password/edit.html.erb'
+      m.file 'email/signup.erb', 'app/views/email/signup.erb'
+      m.file 'email/forgot_password.erb', 'app/views/email/forgot_password.erb'
 
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
@@ -30,6 +35,7 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.file 'test/user_test.rb', 'test/unit/user_test.rb'
       m.file 'test/session_controller_test.rb', 'test/functional/session_controller_test.rb'      
       m.file 'test/users_controller_test.rb', 'test/functional/users_controller_test.rb'
+      m.file 'test/forgot_password_controller_test.rb', 'test/functional/forgot_password_controller_test.rb'
 
       # Factories
       m.directory 'test/factories'
@@ -37,12 +43,15 @@ class MendableAuthGenerator < Rails::Generator::Base
 
       # Routes
       routes_to_add = <<-END
-  map.resource :session,  :controller => 'session'
+  map.resource  :session,          :controller => 'session'
+  map.resource  :forgot_password,  :controller => 'forgot_password'
   map.resources :users
 
   map.login '/login',     :controller => 'session', :action => 'new'
   map.logout '/logout',   :controller => 'session', :action => 'destroy'
   map.signup '/signup',   :controller => 'users', :action => 'new'
+  map.forgot_password       'forgot_password', :controller => 'forgot_password', :action => 'new'
+  map.forgot_password_reset 'forgot_password/reset/:id', :controller => 'forgot_password', :action => 'edit'
 END
       add_to_routes(routes_to_add)
  

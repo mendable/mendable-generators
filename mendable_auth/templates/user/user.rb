@@ -29,4 +29,10 @@ class User < ActiveRecord::Base
     Email.deliver_signup(self)    
   end
 
+  # Function returns a hash code that can be sent out in URL's by email, user clicks the url,
+  # and we can verify the hash code they pass back in the url ties in to this user account.
+  def password_reset_code
+    Digest::SHA1.hexdigest(self.password)
+  end
+
 end
