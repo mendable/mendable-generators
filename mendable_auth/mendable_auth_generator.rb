@@ -43,15 +43,17 @@ class MendableAuthGenerator < Rails::Generator::Base
 
       # Routes
       routes_to_add = <<-END
-  map.resource  :session,          :controller => 'session'
-  map.resource  :forgot_password,  :controller => 'forgot_password'
-  map.resources :users
-
   map.login '/login',     :controller => 'session', :action => 'new'
   map.logout '/logout',   :controller => 'session', :action => 'destroy'
-  map.signup '/signup',   :controller => 'users', :action => 'new'
+  map.resource  :session,          :controller => 'session'
+
   map.forgot_password       'forgot_password', :controller => 'forgot_password', :action => 'new'
   map.forgot_password_reset 'forgot_password/reset/:id', :controller => 'forgot_password', :action => 'edit'
+  map.resource :forgot_password, :controller => 'forgot_password'
+
+  map.signup '/signup',   :controller => 'users', :action => 'new'
+  map.resources :users
+
 END
       add_to_routes(routes_to_add)
  
