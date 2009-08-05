@@ -13,17 +13,22 @@ class SessionController < ApplicationController
     
     if auth_user then
       set_current_user auth_user
+
+      new_cookie_flag = (params[:remember_me] == "1")
+      handle_remember_cookie! new_cookie_flag
+
       flash[:notice] = "Login Successful"
       redirect_to root_url
     else # authentication failed
       flash[:error] = "Unable to login, please check your details and try again"
+      @remember_me = params[:remember_me]
       render :new
     end
   end
 
   # logout
   def destroy
-    session[:user_id] = nil
+    logout_killing_session!
     flash[:notice] = "Logout Successful"
     redirect_to root_url
   end

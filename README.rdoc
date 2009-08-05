@@ -36,8 +36,24 @@ Features:
 * RESTful Forgot Password controller allowing users to reset their password
 * Encrypts passwords using BCrypt
 * Full test suite using Shoulda and Factory Girl
-* Test Ratio of 1:2 (over 130+ tests)
+* Test Ratio of 1:1.8 (over 150+ tests)
 * 100% Test coverage (rcov verified)
+
+=== Usage
+  $ ./script/generate mendable_auth
+  $ sudo rake gems:install
+  $ rake db:migrate
+  $ rake test
+
+You can also add this to your application layout to get some quick links working:
+  <% if logged_in? then %>
+    <li><%= link_to 'Edit Account', edit_user_path(current_user) %></li>
+    <li><%= link_to 'Logout', logout_url %></li>
+  <% else %>
+    <li><%= link_to 'Login', login_url %></li>
+    <li><%= link_to 'Signup', signup_url %></li>
+  <% end %>
+
 
 Design decisions:
 * Users should log in with their EMAIL address (not username). On the basis that user's should be able to remember their own email address, but usernames for each site they visit is not so likely.

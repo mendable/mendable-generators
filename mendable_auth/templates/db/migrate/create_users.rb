@@ -4,8 +4,12 @@ class CreateUsers < ActiveRecord::Migration
       t.string :username
       t.string :email
       t.string :crypted_password
+      t.string :remember_token
+      t.datetime :remember_token_expires_at
       t.timestamps
     end
+
+    add_index :<%= table_name %>, :email, :unique => true
   end
  
   def self.down

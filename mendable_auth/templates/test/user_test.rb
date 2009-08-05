@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
   should_allow_values_for :username, *%w{bob33 baz09 baz0- abcdefg13098875 -fa539 48xx5fi}
   should_not_allow_values_for :username, *%w{sht aa$12 %percent ^aaa #234ff [42fa 5ffa] 1af1" yya*}
   should_not_allow_values_for :username, ' ' # Don't allow technically empty usernames where user just tried to put a space
-
+  should_have_db_index :email, :unique => true
 
   # Validate email field
   context "A valid user" do
@@ -102,5 +102,56 @@ class UserTest < ActiveSupport::TestCase
       assert_match /^\$/, @user.crypted_password
     end
   end
+
+  context "Remember functions" do
+    setup do
+      @user = Factory(:user)
+    end
+
+    context "remember_me" do
+      setup do
+        @remembered = 2.weeks.from_now.utc
+        @user.remember_me
+      end
+
+      should "set remember token" do
+        assert_not_nil @user.remember_token
+        assert_not_nil @user.remember_token_expires_at
+      end
+
+      should "remember for default two weeks" do
+        assert @user.remember_token_expires_at.between?(@remembered, 2.weeks.from_now.utc)
+      end
+    end
+
+    context "forget_me" do
+      should "unset token" do
+        @user.remember_me
+        @user.forget_me
+        assert_nil @user.remember_token
+      end
+    end
+
+    context "remember_me_for" do
+      should "remember me for one week" do
+        before = 1.week.from_now.utc
+        @user.remember_me_for 1.week
+        after = 1.week.from_now.utc
+        assert_not_nil @user.remember_token
+        assert_not_nil @user.remember_token_expires_at
+        assert @user.remember_token_expires_at.between?(before, after)
+      end
+    end
+
+    context "remember me until" do
+      should "remember me until one week" do
+        time = 1.week.from_now.utc
+        @user.remember_me_until time
+        assert_not_nil @user.remember_token
+        assert_not_nil @user.remember_token_expires_at
+        assert_equal @user.remember_token_expires_at, time
+      end
+    end
+  end # remember functions
 
 end

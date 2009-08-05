@@ -28,6 +28,9 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.file 'email/signup.erb', 'app/views/email/signup.erb'
       m.file 'email/forgot_password.erb', 'app/views/email/forgot_password.erb'
 
+      # Libs
+      m.file 'mendable_auth.rb', 'lib/mendable_auth.rb'
+    
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
 
@@ -60,33 +63,7 @@ END
      
       # Application Controller
       code_to_add = <<-END
-  # Returns the currently logged in user, otherwise nil/false.
-  def current_user
-    return nil if not logged_in?
-    User.find(session[:user_id])
-  end
-
-  # Sets the currently logged in user
-  def set_current_user(user)
-    session[:user_id] = user.id
-  end
-
-  helper_method :logged_in?
-  # Is the user currently logged in, or are they browsing as a guest? Returns
-  # true/false accordingly.
-  def logged_in?
-    session[:user_id] && session[:user_id].to_i > 0 ? true : false
-  end
-
-  # before_filter to ensure a user is logged in before accessing specified actions.
-  def login_required
-    if !logged_in? then
-      flash[:notice] = "You need to sign up or log in before seeing this page."
-      redirect_to login_url
-      return false
-    end
-    return true
-  end
+  include MendableAuth::Controller
 END
       add_to_application_controller(code_to_add)
 
