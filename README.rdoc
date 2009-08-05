@@ -17,7 +17,11 @@ Based on scaffold generator from Rails 2.3.3, usage is exactly the same as the s
 * Includes create/edit/destroy icons, to start delivering a polished-app feel immediately
 * Gives the index view table a CSS id for easy styling, and each row a cycle'd class name
 * Uses Shoulda for functional testing
-* CAN BE NESTED, using "--owner=Model" to create nested controller and views! (needs functional test + documentation - coming soon)
+* CAN BE NESTED, using "--owner=Model" to create nested controller and views! 
+
+=== Usage
+  $ ./script/generate mendable_scaffold company company_name:string
+  $ ./script/generage mendable_scaffold employee employee_name:string --owner=Company
 
 
 == mendable_model
@@ -28,7 +32,7 @@ Based on shoulda_model from http://github.com/technicalpickles/shoulda_generator
 == mendable_auth
 This was a ground-up rewrite of the restful_authentication generator, the primary purpose was to include missing functionality (such as forgot password actions) and provide a far superior test suite using Shoulda and Factory Girl. mendable_auth should be used at the start of a project where you will need user authentication. It provides a great base on which to build your application.
 
-Features:
+=== Features
 * User model with username, email address and password
 * Email model with Signup and Forgot Password emails
 * RESTful Session Controller with Login and Logout actions
@@ -55,7 +59,7 @@ You can also add this to your application layout to get some quick links working
   <% end %>
 
 
-Design decisions:
+=== Design decisions
 * Users should log in with their EMAIL address (not username). On the basis that user's should be able to remember their own email address, but usernames for each site they visit is not so likely.
 * Should NOT require user to validate their account by sending them an activation email. This is just plain bad usability, forcing user's to navigate away from your website or application, breaking their concentration, and reducing signup conversion rates.
 * The Model and Controller names are standardized.
