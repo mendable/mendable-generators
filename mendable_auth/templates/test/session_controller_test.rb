@@ -22,6 +22,21 @@ class SessionControllerTest < ActionController::TestCase
       should_redirect_to("homepage") { root_url }
       should_not_set_the_flash
     end
+
+    context "with a redirect to path assigned in the url" do
+      setup do
+        @redirect_url = "/another/page"
+        get :new, :r => @redirect_url
+      end
+      
+      should_respond_with :success
+      should_render_template :new
+      should_not_set_the_flash
+      should "save the redirect url in the session" do
+        assert_not_nil session[:return_to]
+        assert_equal session[:return_to], @redirect_url
+      end
+    end
   end
 
 
@@ -42,6 +57,15 @@ class SessionControllerTest < ActionController::TestCase
         end
         should_redirect_to("homepage") { root_url }
         should_set_the_flash_to "Login Successful" 
+      end
+
+      context "using correct login details, and redirecting to stored page" do
+        setup do
+          session[:return_to] = "/other/page"
+          post :create, :email => @user.email, :password => @password
+        end
+
+        should_redirect_to("other page url") { "/other/page" }
       end
 
       context "but incorrect password" do

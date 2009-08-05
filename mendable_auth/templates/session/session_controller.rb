@@ -5,6 +5,8 @@ class SessionController < ApplicationController
     if logged_in? then
       redirect_to root_url
     end
+    
+    store_location(params[:r]) if params[:r]
   end
 
   # process login credentials
@@ -18,7 +20,7 @@ class SessionController < ApplicationController
       handle_remember_cookie! new_cookie_flag
 
       flash[:notice] = "Login Successful"
-      redirect_to root_url
+      redirect_back_or_default root_url
     else # authentication failed
       flash[:error] = "Unable to login, please check your details and try again"
       @remember_me = params[:remember_me]

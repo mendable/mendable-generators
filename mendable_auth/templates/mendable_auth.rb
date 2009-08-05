@@ -129,12 +129,7 @@ module MendableAuth
 
       # before_filter to ensure a user is logged in before accessing specified actions.
       def login_required
-        if !logged_in? then
-          flash[:notice] = "You need to sign up or log in before seeing this page."
-          redirect_to login_url
-          return false
-        end
-        return true
+        logged_in? || access_denied
       end
 
       # Called from #current_user.  First attempt to login by the user id stored in the session.
@@ -191,6 +186,42 @@ module MendableAuth
       def logout_killing_session!
         logout_keeping_session!
         reset_session
+      end
+
+
+      # Redirect to the URI stored by the most recent store_location call or
+      # to the passed default.  Set an appropriately modified. 
+      #   after_filter :store_location, :only => [:index, :new, :show, :edit]
+      # for any controller you want to be bounce-backable.
+      def redirect_back_or_default(default)
+        redirect_to(session[:return_to] || default)
+        session[:return_to] = nil
+      end
+
+      # The default action is to redirect to the login screen.
+      #
+      # Override this method in your controllers if you want to have special
+      # behavior in case the user is not authorized to access the requested action.
+      def access_denied
+        respond_to do |format|
+          format.html do
+            store_location
+            redirect_to login_url
+          end
+          # format.any doesn't work in rails version < http://dev.rubyonrails.org/changeset/8987
+          # Add any other API formats here.  (Some browsers, notably IE6, send Accept: */* and trigger 
+          # the 'format.any' block incorrectly. See http://bit.ly/ie6_borken or http://bit.ly/ie6_borken2
+          # for a workaround.)
+          format.any(:json, :xml) do
+            request_http_basic_authentication 'Web Password'
+          end
+        end
+      end
+
+      # Store the URI of the current request in the session.
+      # We can return to this location by calling #redirect_back_or_default.
+      def store_location(redirect_url = '')
+        session[:return_to] = redirect_url || request.request_uri
       end
 
 
