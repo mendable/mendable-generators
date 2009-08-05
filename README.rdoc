@@ -34,6 +34,7 @@ Features:
 * RESTful Session Controller with Login and Logout actions
 * RESTful User controller including signup and edit account functionality
 * RESTful Forgot Password controller allowing users to reset their password
+* Encrypts passwords using BCrypt
 * Full test suite using Shoulda and Factory Girl
 * Test Ratio of 1:2 (over 130+ tests)
 * 100% Test coverage (rcov verified)

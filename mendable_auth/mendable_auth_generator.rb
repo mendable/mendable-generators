@@ -117,6 +117,8 @@ END
   end
 END
       add_to_test_helper(code_to_add)
+
+      add_to_environment("  config.gem 'bcrypt-ruby', :lib => 'bcrypt'")
     end
   end 
 
@@ -155,4 +157,7 @@ END
       add_to_file('app/controllers/application_controller.rb', 'class ApplicationController < ActionController::Base', helper_code)
     end
 
+    def add_to_environment(helper_code)
+      add_to_file('config/environment.rb', 'Rails::Initializer.run do |config|', helper_code)
+    end
 end

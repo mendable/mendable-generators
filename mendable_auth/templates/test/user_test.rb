@@ -22,17 +22,24 @@ class UserTest < ActiveSupport::TestCase
   should_not_allow_values_for :email, *%w{foobar@example.c @example.com @fcom foo@bar..com foobar@example.infod foobar.example.com foo@ex(ample.com foo@example,com}
 
   # Confirm password enforces a reasonable length constraint
-  should_ensure_length_in_range :password, 4..16
+  #should_ensure_length_in_range :password, 4..16
 
 
   context "attempting authentication" do
     context "for an existing user" do
-      setup { @user = Factory(:user) }
-
-      should "return user record when correct email and password used" do
-        assert_equal @user, User.authenticate(@user.email, @user.password)
+      setup do
+        @password = "password".downcase
+        @user = Factory(:user, :password => @password)
       end
 
+      should "return user record when correct email and password used" do
+        assert_equal @user, User.authenticate(@user.email, @password)
+      end
+      
+      should "be case insensitive and return user record when correct email and password (with case difference) used" do
+        assert_equal @user, User.authenticate(@user.email, @password.upcase)
+      end
+      
       should "return nil when correct email but invalid password used" do
         assert_equal nil, User.authenticate(@user.email, "wrong_password")
       end
@@ -63,8 +70,36 @@ class UserTest < ActiveSupport::TestCase
       @user = Factory(:user, :password => "password")
     end
     
-    should "return a SHA1 Digest of the password as the reset code" do
-      assert_equal "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", @user.password_reset_code
+    should "return a SHA1 Digest of the password field as the reset code" do
+      assert_equal Digest::SHA1.hexdigest(@user.crypted_password), @user.password_reset_code
+    end
+  end
+
+
+  # Initial defensive test, modify if you do send any emails upon update
+  context "updating an existing user" do
+    setup do
+      @user = Factory(:user)
+      ActionMailer::Base.deliveries.clear
+      @user.save
+    end
+
+    should "not send any emails" do
+      assert_equal 0, ActionMailer::Base.deliveries.size
+    end
+  end
+
+
+  context "Setting a users password" do
+    setup do
+      @user = Factory(:user, :crypted_password => "", :password => "password")
+      @user.reload
+    end
+
+    should "store an encrypted password in the crypted_password field" do
+      assert @user.crypted_password != @user.password
+      assert_equal 60, @user.crypted_password.length
+      assert_match /^\$/, @user.crypted_password
     end
   end
 

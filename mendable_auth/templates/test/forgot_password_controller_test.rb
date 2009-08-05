@@ -107,12 +107,13 @@ class ForgotPasswordControllerTest < ActionController::TestCase
 
       context "with a valid reset code and valid password" do
         setup do
+          @original_password_hash = @user.crypted_password
           put :update, :id => @user, :c => @user.password_reset_code, :user => {:password => "newpassword"}
         end
 
         should "update the users password" do
           @user.reload
-          assert_equal @user.password, "newpassword" 
+          assert_not_equal @user.crypted_password, @original_password_hash
         end
 
         should_redirect_to("login page") { login_url }
