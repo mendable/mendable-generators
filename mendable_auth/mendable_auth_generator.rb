@@ -1,4 +1,5 @@
 class MendableAuthGenerator < Rails::Generator::Base
+  default_options :with_simple_admin => false
 
   def manifest
     record do |m|
@@ -11,7 +12,7 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.file 'forgot_password/forgot_password_controller.rb', 'app/controllers/forgot_password_controller.rb'
 
       # Models
-      m.file 'user/user.rb', 'app/models/user.rb'
+      m.template 'user/user.rb', 'app/models/user.rb'
       m.file 'email/email.rb', 'app/models/email.rb'
 
       # Views
@@ -29,13 +30,14 @@ class MendableAuthGenerator < Rails::Generator::Base
       m.file 'email/forgot_password.erb', 'app/views/email/forgot_password.erb'
 
       # Libs
-      m.file 'mendable_auth.rb', 'lib/mendable_auth.rb'
+      m.template 'mendable_auth.rb', 'lib/mendable_auth.rb'
+      m.template 'test/mendable_auth_test_helper.rb', 'lib/mendable_auth_test_helper.rb'
     
       # Migrations
       m.migration_template 'db/migrate/create_users.rb', 'db/migrate', :assigns => {:table_name => "users", :class_name => "User"}, :migration_file_name => "create_users"
 
       # Tests
-      m.file 'test/user_test.rb', 'test/unit/user_test.rb'
+      m.template 'test/user_test.rb', 'test/unit/user_test.rb'
       m.file 'test/session_controller_test.rb', 'test/functional/session_controller_test.rb'      
       m.file 'test/users_controller_test.rb', 'test/functional/users_controller_test.rb'
       m.file 'test/forgot_password_controller_test.rb', 'test/functional/forgot_password_controller_test.rb'
@@ -62,45 +64,32 @@ END
  
      
       # Application Controller
-      code_to_add = <<-END
-  include MendableAuth::Controller
-END
-      add_to_application_controller(code_to_add)
-
+      add_to_application_controller("  include MendableAuth::Controller")
 
       # Test helper
-      code_to_add = <<-END
-  def login_as(user)
-    @request.session[:user_id] = user.id
-  end
-
-  def self.should_require_login(method, action, params={})
-    method = method.to_s.downcase
-    context "'\#{method.upcase}' method on '\#{action}' action" do
-      setup do
-        case method
-          when "get"   : get(action, params)
-          when "post"  : post(action, params)
-          when "put"   : put(action, params)
-          when "delete": delete(action, params)
-          else raise "\#{method.upcase} is an unknown HTTP method"
-        end
+      if options[:with_simple_admin] then
+        add_to_test_helper_requires("require 'mendable_auth_test_helper'")
       end
 
-      should "require login" do
-        assert_redirected_to login_url
-      end
-    end
-  end
-END
-      add_to_test_helper(code_to_add)
-
+      # Environment
       add_to_environment("  config.gem 'bcrypt-ruby', :lib => 'bcrypt'")
     end
   end 
 
 
   protected
+    def banner
+      "Usage: #{$0} mendable_auth"
+    end
+
+    def add_options!(opt)
+      opt.separator ''
+      opt.separator 'Options:'
+      opt.on("--with-simple-admin", "Includes is_admin? field and admin helpers") { |v| options[:with_simple_admin] = v }
+    end
+
+
+
     def exists_in_file?(relative_destination, string)
       path = destination_path(relative_destination)
       content = File.read(path)
@@ -124,6 +113,10 @@ END
     
     def add_to_test_helper(helper_code)
       add_to_file('test/test_helper.rb', 'class ActiveSupport::TestCase', helper_code)
+    end
+
+    def add_to_test_helper_requires(require_lines)
+      add_to_file('test/test_helper.rb', "require 'test_help'", require_lines)
     end
 
     def add_to_routes(route_text)

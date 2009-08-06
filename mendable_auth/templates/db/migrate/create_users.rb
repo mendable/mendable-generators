@@ -6,6 +6,9 @@ class CreateUsers < ActiveRecord::Migration
       t.string :crypted_password
       t.string :remember_token
       t.datetime :remember_token_expires_at
+      <% if options[:with_simple_admin] %>
+      t.boolean :is_admin
+      <% end -%>
       t.timestamps
     end
 

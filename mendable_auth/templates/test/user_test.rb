@@ -3,6 +3,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 class UserTest < ActiveSupport::TestCase
   
   should_not_allow_mass_assignment_of :id
+  <% if options[:with_simple_admin] %>
+  should_not_allow_mass_assignment_of :is_admin
+  <% end %>
   
   # Validate username field as being in our correct format. 
   should_ensure_length_in_range :username, 4..50

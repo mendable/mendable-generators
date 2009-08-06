@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   include MendableAuth::Model
 
   attr_protected :id
+  <% if options[:with_simple_admin] %>
+  attr_protected :is_admin
+  <% end -%>
   
   validates_presence_of :username
   validates_uniqueness_of :username

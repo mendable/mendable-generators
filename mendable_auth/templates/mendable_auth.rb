@@ -148,6 +148,12 @@ module MendableAuth
         logged_in? || access_denied
       end
 
+<% if options[:with_simple_admin] %>
+      def admin_login_required
+        (logged_in? && current_user.is_admin? == true) || access_denied
+      end
+<% end %>
+
       # Called from #current_user.  First attempt to login by the user id stored in the session.
       def login_from_session
         self.set_current_user(User.find_by_id(session[:user_id])) if session[:user_id]
