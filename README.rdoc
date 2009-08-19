@@ -66,6 +66,10 @@ You can also add this to your application layout to get some quick links working
 * The Model and Controller names are standardized.
 
 
+== mendable_contact_form
+Provides a simple contact form allowing users to send an email to the site administrator. 
+* Assumes you have used mendable_auth, and you have a current_user function and an Email model
+
 == Patches
 If you branch and enhance this product in anyway, please do contact me to let me know, either on GitHub (http://www.github.com/mendable) or through my website (http://www.mendable.com).
 
