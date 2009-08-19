@@ -67,9 +67,7 @@ END
       add_to_application_controller("  include MendableAuth::Controller")
 
       # Test helper
-      if options[:with_simple_admin] then
-        add_to_test_helper_requires("require 'mendable_auth_test_helper'")
-      end
+      add_to_test_helper_requires("require 'mendable_auth_test_helper'")
 
       # Environment
       add_to_environment("  config.gem 'bcrypt-ruby', :lib => 'bcrypt'")
